@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Bug WhatsApp Sender</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      background: #f0f0f0;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    input, select, button {
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #25D366;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #128C7E;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🧨 Kirim Bug WhatsApp</h2>
+    <label>Nomor Target (format internasional, tanpa +):</label>
+    <input type="text" id="target" placeholder="628xxx...">
+
+    <label>Pilih Jenis Bug:</label>
+    <select id="bugType">
+      <option value="docfc">Document FC</option>
+      <option value="nativecore">Native Core</option>
+      <option value="crashcall">Crash Call</option>
+      <option value="carousel">Carousel FC</option>
+    </select>
+
+    <button onclick="sendBug()">Kirim Bug</button>
+    <button onclick="connectWa()">🔗 Connect WhatsApp</button>
+
+    <div id="qrcode" style="margin-top: 2rem;"></div>
+  </div>
+
+  <script>
+    async function connectWa() {
+      const res = await fetch('http://localhost:3000/connect');
+      const data = await res.json();
+      document.getElementById('qrcode').innerHTML = '<img src="' + data.qr + '" width="200"/>';
+    }
+
+    async function sendBug() {
+      const target = document.getElementById('target').value;
+      const bugType = document.getElementById('bugType').value;
+      const res = await fetch('http://localhost:3000/send-bug', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ target, bugType })
+      });
+      const data = await res.json();
+      alert(data.message);
+    }
+  </script>
+</body>
+</html>
